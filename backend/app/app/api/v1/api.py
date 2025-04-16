@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from app.api.v1.endpoints import (
-    weather, tuxsuite, riscv_lab
+    tuxsuite, riscv_lab
 )
 
 api_router = APIRouter()

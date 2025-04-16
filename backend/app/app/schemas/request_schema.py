@@ -35,5 +35,5 @@ class TuxSuiteTestRequest(BaseModel):
 class TuxSuiteTestSuite(BaseModel):
     build_id: str
     kernel_image_url: str
-    modules_url: str
+    modules_url: str | None
     tests: list[str]
