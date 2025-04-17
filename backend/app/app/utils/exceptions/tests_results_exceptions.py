@@ -1,0 +1,3 @@
+
+class DownloadResultsException(Exception):
+    pass

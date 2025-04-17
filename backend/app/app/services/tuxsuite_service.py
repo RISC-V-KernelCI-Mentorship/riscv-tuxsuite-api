@@ -1,5 +1,14 @@
+from app.models.tests import ScheduledTest
+from app.schemas.tuxsuite import TuxSuiteTestStatus
+from app.services.kcidb_services import KCIDBTestSubmission
+from app.utils.exceptions.tests_results_exceptions import DownloadResultsException
+import logging
+from app.utils.test_parser import generate_test_id, get_test_path
 import tuxsuite
 import argparse
+import httpx
+
+logger = logging.getLogger(__name__)
 
 def run_tuxsuite_tests(kernel_url: str, modules_url: str | None, tests: list[str], device: str) -> str:
     params = {
@@ -13,6 +22,36 @@ def run_tuxsuite_tests(kernel_url: str, modules_url: str | None, tests: list[str
     test.test()
     uid = test.uid
     return uid
+
+async def parse_tuxsuite2kcidb(tests_results: TuxSuiteTestStatus, stored_test: ScheduledTest) -> list[KCIDBTestSubmission]:
+    parsed_results = []
+    logs_url = f"{tests_results.download_url}/logs.txt"
+    results_json_url = f"{tests_results.download_url}/results.json"
+    async with httpx.Client() as client:
+        logs_response = await client.get(logs_url)
+        try:
+            logs_response.raise_for_status()
+            logs = logs_response.text
+        except:
+            logs = ""
+        results_response = await client.get(results_json_url)
+        try:
+            results_response.raise_for_status()
+            results = results_response.json()
+        except:
+            raise DownloadResultsException()
+    lava_info = results['lava']
+    for test in tests_results.tests:
+        if test not in lava_info:
+            logging.warning(f"No results for {test}")
+            continue
+        path = get_test_path(stored_test.test_collection, test)
+        test_id = generate_test_id(stored_test.test_uid, stored_test.test_collection, test)
+        test_result = lava_info[test]
+        parsed_results.append(KCIDBTestSubmission(path,  test_result, logs, test_id, stored_test.build_id))
+    
+    return parsed_results
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run tuxsuite test from the command line")

@@ -1,10 +1,11 @@
 from sqlmodel import JSON, Column, Field, SQLModel, create_engine
 
-class ScheduledTests(SQLModel, table=True):
+class ScheduledTest(SQLModel, table=True):
     __tablename__ = "scheduled_tests"
 
     test_uid: str = Field(primary_key=True)
     build_id: str
+    test_collection: str
 
 
 class TestResults(SQLModel, table=True):
@@ -15,7 +16,7 @@ class TestResults(SQLModel, table=True):
     results: dict = Field(sa_column=Column(JSON))
 
 
-class FinishedTests(SQLModel, table=True):
+class FinishedTest(SQLModel, table=True):
     __tablename__ = "finished_tests"
 
     build_id: str = Field(primary_key=True)
