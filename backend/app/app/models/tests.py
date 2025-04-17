@@ -16,11 +16,11 @@ class TestResults(SQLModel, table=True):
     results: dict = Field(sa_column=Column(JSON))
 
 
-class FinishedTest(SQLModel, table=True):
-    __tablename__ = "finished_tests"
+class RunTest(SQLModel, table=True):
+    __tablename__ = "run_tests"
 
     build_id: str = Field(primary_key=True)
-    test_uid: str = Field(primary_key=True)
+    test_collection: str = Field(primary_key=True)
 
 
 if __name__ == "__main__":

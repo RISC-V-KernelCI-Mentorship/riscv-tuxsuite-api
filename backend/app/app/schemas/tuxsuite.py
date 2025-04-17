@@ -37,3 +37,4 @@ class TuxSuiteTestSuite(BaseModel):
     kernel_image_url: str
     modules_url: str | None
     tests: list[str]
+    collection: str

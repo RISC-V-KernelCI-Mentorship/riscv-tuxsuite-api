@@ -18,7 +18,7 @@ async def test_callback(x_tux_payload_signature: Annotated[str | None, Header()]
     It obtains the test from the database (to get its build id), stores the results in 
     the TestResults table and marks the test as finished.
     """
-    print(x_tux_payload_signature)
+    # TODO: add payload signature check
     tests_results = request.status
     test = session.exec(select(ScheduledTest).where(ScheduledTest.test_uid == tests_results.uid)).one()
     parsed_test_results = parse_tuxsuite2kcidb(tests_results, test)
