@@ -26,6 +26,10 @@ async def run_tests(tests_data: TuxSuiteTestSuite, session: SessionDep, request:
             continue
         tests_to_run.append(test)
 
+    if len(tests_to_run) == 0:
+        logger.info(f"No tests to run for build: {tests_data.build_id}")
+        return
+
     test_uid = run_tuxsuite_tests(tests_data.kernel_image_url, tests_data.modules_url,
                                   tests_to_run, "qemu-riscv64",
                                   str(request.url_for("test_callback")))

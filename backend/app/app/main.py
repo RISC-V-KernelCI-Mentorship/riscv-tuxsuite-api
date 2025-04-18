@@ -9,12 +9,18 @@ from starlette.middleware.cors import CORSMiddleware
 import logging
 import sys
 
+logging.basicConfig(level=logging.INFO,
+                    format="%(asctime)s [%(processName)s: %(process)d] [%(threadName)s: %(thread)d] [%(levelname)s] %(name)s: %(message)s",
+                    handlers=[logging.StreamHandler(sys.stdout)])
+
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.StreamHandler(sys.stdout))
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
     print("startup fastapi")
-    logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
     create_db()
     yield
     # shutdown
