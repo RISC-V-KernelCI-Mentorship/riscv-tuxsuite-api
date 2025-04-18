@@ -17,7 +17,7 @@ class Settings(BaseSettings, extra='ignore'):
     DB_URL: str = "sqlite:///database.db"
     API_VERSION: str = "v1"
     API_V1_STR: str = f"/api/{API_VERSION}"
-    WHEATER_URL: str = "https://wttr.in"
+    BASE_URL: str = "https://wttr.in"
 
     
     class Config:

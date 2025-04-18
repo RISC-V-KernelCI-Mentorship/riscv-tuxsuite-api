@@ -10,11 +10,12 @@ import httpx
 
 logger = logging.getLogger(__name__)
 
-def run_tuxsuite_tests(kernel_url: str, modules_url: str | None, tests: list[str], device: str) -> str:
+def run_tuxsuite_tests(kernel_url: str, modules_url: str | None, tests: list[str], device: str, callback: str) -> str:
     params = {
         "device": device,
         "kernel": kernel_url,
-        "tests": tests
+        "tests": tests,
+        "callback": callback
     }
     if modules_url is not None:
         params["modules"] = modules_url

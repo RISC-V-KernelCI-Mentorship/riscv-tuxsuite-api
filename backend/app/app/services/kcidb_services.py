@@ -1,4 +1,6 @@
 
+from app.models.tests import TestResults
+from app.utils.exceptions.tests_results_exceptions import TestSubmitionException
 from typing_extensions import Self
 import datetime
 import logging
@@ -64,11 +66,13 @@ class KCIDBTestSubmission:
 _submitter = KCITestResultsSubmitter()
 
 
-def submit_tests(tests: list[KCIDBTestSubmission]):
-    # TODO: Store results in db
-    # TODO: Store 
+def submit_tests(tests: list[KCIDBTestSubmission], test_uid: str):
+    results = []
+    for item in tests:
+        results.append(item.to_json())
+
     try:
         _submitter.submit(tests)
-        # TODO: Remove tests: submission was successful
     except:
         logger.error("Could not validate submission!")
+        raise TestSubmitionException()
