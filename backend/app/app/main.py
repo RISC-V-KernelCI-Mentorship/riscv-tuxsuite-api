@@ -1,3 +1,4 @@
+from app.core.db import create_db
 from fastapi import (
     FastAPI,
 )
@@ -5,12 +6,16 @@ from app.api.v1.api import api_router as api_router_v1
 from app.core.config import settings
 from contextlib import asynccontextmanager
 from starlette.middleware.cors import CORSMiddleware
+import logging
+import sys
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
     print("startup fastapi")
+    logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
+    create_db()
     yield
     # shutdown
     print("shutdown fastapi")

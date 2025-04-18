@@ -2,7 +2,7 @@
 from app.models.tests import TestResults
 from app.utils.exceptions.tests_results_exceptions import TestSubmitionException
 from typing_extensions import Self
-import datetime
+from datetime import datetime, timezone
 import logging
 import kcidb
 import yaml
@@ -58,7 +58,7 @@ class KCIDBTestSubmission:
                 "origin": self.__origin,
                 "status": self.__result,
                 "path": self.__path,
-                "start_time": datetime.now(datetime.timezone.utc).replace(microsecond=0).isoformat(),
+                "start_time": datetime.now(timezone.utc).replace(microsecond=0).isoformat(),
                 "misc": {}
             }
 
@@ -66,7 +66,7 @@ class KCIDBTestSubmission:
 _submitter = KCITestResultsSubmitter()
 
 
-def submit_tests(tests: list[KCIDBTestSubmission], test_uid: str):
+def submit_tests(tests: list[KCIDBTestSubmission]):
     results = []
     for item in tests:
         results.append(item.to_json())

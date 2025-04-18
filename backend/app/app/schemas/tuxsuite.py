@@ -1,5 +1,5 @@
-from typing import Annotated, Literal, Optional
-from pydantic import BaseModel, Field
+from typing import Literal, Optional
+from pydantic import BaseModel
 
 # {'kind': 'test', 
 # 'status': {'ap_romfw': None, 'bios': None, 'bl1': None, 'boot': None, 
@@ -35,6 +35,6 @@ class TuxSuiteTestRequest(BaseModel):
 class TuxSuiteTestSuite(BaseModel):
     build_id: str
     kernel_image_url: str
-    modules_url: str | None
+    modules_url: Optional[str] = None
     tests: list[str]
     collection: str

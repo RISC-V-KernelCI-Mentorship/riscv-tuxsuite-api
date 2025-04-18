@@ -1,0 +1,6 @@
+kcidb:
+  major: 5
+  minor: 1
+  project_id: kernelci-production
+  topic: playground_kcidb_new
+  is_debug: true

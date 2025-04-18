@@ -4,3 +4,6 @@ class DownloadResultsException(Exception):
 
 class TestSubmitionException(Exception):
     pass
+
+class InvalidResultsException(Exception):
+    pass

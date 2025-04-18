@@ -17,9 +17,9 @@ class Settings(BaseSettings, extra='ignore'):
     DB_URL: str = "sqlite:///database.db"
     API_VERSION: str = "v1"
     API_V1_STR: str = f"/api/{API_VERSION}"
-    BASE_URL: str = "https://wttr.in"
+    BASE_URL: str = "https://9e1e-152-230-99-209.ngrok-free.app"
 
-    
+
     class Config:
         case_sensitive = True
         env_file = os.path.expanduser("../../.env")
