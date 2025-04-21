@@ -20,7 +20,7 @@ class KCITestResultsSubmitter:
                                      topic_name=config_file["kcidb"]["topic"])
         self.__version_major = config_file["kcidb"]["major"]
         self.__version_minor = config_file["kcidb"]["minor"]
-        self.__debug = config_file["kcidb"]["is_debug"]
+        self.__debug = settings.DEBUG
 
 
     def submit(self, tests):

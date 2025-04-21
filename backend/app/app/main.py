@@ -6,12 +6,14 @@ from app.api.v1.api import api_router as api_router_v1
 from app.core.config import settings
 from contextlib import asynccontextmanager
 from starlette.middleware.cors import CORSMiddleware
+from logging.handlers import RotatingFileHandler
 import logging
 import sys
 
-logging.basicConfig(level=logging.INFO,
+rotating_handler = RotatingFileHandler(settings.LOGS_FILE, maxBytes=20*1024, backupCount=2)
+logging.basicConfig(level=logging.DEBUG if settings.DEBUG else logging.INFO,
                     format="%(asctime)s [%(processName)s: %(process)d] [%(threadName)s: %(thread)d] [%(levelname)s] %(name)s: %(message)s",
-                    handlers=[logging.StreamHandler(sys.stdout)])
+                    handlers=[logging.StreamHandler(sys.stdout), rotating_handler])
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler(sys.stdout))
