@@ -1,8 +1,8 @@
 from app.core.db import SessionDep
-from app.models.tests import ScheduledTest, RunTest
+from app.models.tests import ScheduledTest, RunTest, TestResults
 from app.schemas.tuxsuite import TuxSuiteTestSuite
 from app.services.tuxsuite_service import run_tuxsuite_tests
-from app.core.config import settings
+from app.services.kcidb_services import submit_tests
 from sqlmodel import func, select
 from fastapi import APIRouter, Request
 import logging
@@ -39,4 +39,19 @@ async def run_tests(tests_data: TuxSuiteTestSuite, session: SessionDep, request:
         run_test = RunTest(build_id=tests_data.build_id, test=test)
         session.add(run_test)
     # Both queries are run in a transaction
+    session.commit()
+
+
+@router.post("/sync-results", status_code=204)
+async def sync_results(session: SessionDep):
+    non_submitted_tests = session.exec(select(TestResults)).all()
+    for test in non_submitted_tests:
+        test_uid = test.test_uid
+        results = test.results
+        logger.info(f"Submitting results for test uid {test_uid}")
+        try:
+            submit_tests(results)
+            session.delete(test)
+        except:
+            logger.warning(f"Could not submit results for test uid {test_uid}")
     session.commit()

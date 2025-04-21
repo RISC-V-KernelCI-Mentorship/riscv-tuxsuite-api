@@ -1,8 +1,8 @@
 
-from app.models.tests import TestResults
 from app.utils.exceptions.tests_results_exceptions import TestSubmitionException
 from typing_extensions import Self
 from datetime import datetime, timezone
+from app.core.config import settings
 import logging
 import kcidb
 import yaml
@@ -24,9 +24,9 @@ class KCITestResultsSubmitter:
 
 
     def submit(self, tests):
-        logger.info(f"Submitting tests: {[test.to_json() for test in tests]}")
+        logger.info(f"Submitting tests: {tests}")
         report = {
-            "tests": [test.to_json() for test in tests],
+            "tests": tests,
             "version": {
                 "major": self.__version_major,
                 "minor": self.__version_minor
@@ -66,13 +66,9 @@ class KCIDBTestSubmission:
 _submitter = KCITestResultsSubmitter()
 
 
-def submit_tests(tests: list[KCIDBTestSubmission]):
-    results = []
-    for item in tests:
-        results.append(item.to_json())
-
+def submit_tests(tests: list[dict]):
     try:
         _submitter.submit(tests)
-    except:
-        logger.error("Could not validate submission!")
+    except Exception as e:
+        logger.error(f"Could not validate submission!: {str(e)}")
         raise TestSubmitionException()

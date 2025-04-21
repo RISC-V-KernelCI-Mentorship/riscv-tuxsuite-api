@@ -27,10 +27,14 @@ async def test_callback(x_tux_payload_signature: Annotated[str | None, Header()]
     logger.info(f"Received results for {tests_results.uid}")
     test = session.exec(select(ScheduledTest).where(ScheduledTest.test_uid == tests_results.uid)).one()
     parsed_test_results = await parse_tuxsuite2kcidb(tests_results, test)
-    test_row = TestResults(test_uid=tests_results.uid, results={"results": [test.to_json() for test in parsed_test_results]})
+    results = []
+    for item in parsed_test_results:
+        results.append(item.to_json())
+    test_row = TestResults(test_uid=tests_results.uid, results=results)
     
     try:
-        submit_tests(parsed_test_results)
+        session.add(test_row)
+        submit_tests(results)
     except TestSubmitionException:
         session.add(test_row)
         session.commit() 
