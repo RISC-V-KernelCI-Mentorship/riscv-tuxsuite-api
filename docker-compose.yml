@@ -27,7 +27,11 @@ services:
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile
       - caddy_data:/data
       - caddy_config:/config
+      - fastapi_riscv_database:/db
+      - fastapi_riscv_logs:/logs
 
 volumes:
   caddy_data:
   caddy_config:
+  fastapi_riscv_database:
+  fastapi_riscv_logs:
