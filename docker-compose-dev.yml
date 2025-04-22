@@ -1,13 +1,14 @@
-version: '3.8'
-
 services:
   fastapi_server:
     container_name: ${PROJECT_NAME}_fastapi_server
     build: ./backend
     restart: always
-    command: "sh -c 'uvicorn app.main:app --reload --workers 3 --host 0.0.0.0 --port 8000'"
+    command: "sh -c 'uvicorn app.main:app --reload --workers 3 --host 0.0.0.0 --port 8000 --log-config /log.ini'"
     volumes:
       - ./backend/app:/code
+      - ./log.ini:/log.ini
+      - fastapi_riscv_database:/db
+      - fastapi_riscv_logs:/logs
     expose:
       - 8000    
     env_file: ".env"
@@ -19,16 +20,11 @@ services:
     ports:
       - 80:80
       - 443:443
-    environment:
-      - EXT_ENDPOINT1=${EXT_ENDPOINT1}
-      - LOCAL_1=${LOCAL_1}
-      - LOCAL_2=${LOCAL_2}
+    env_file: ".env_caddy"
     volumes:
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile
       - caddy_data:/data
       - caddy_config:/config
-      - fastapi_riscv_database:/db
-      - fastapi_riscv_logs:/logs
 
 volumes:
   caddy_data:

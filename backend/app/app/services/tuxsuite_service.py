@@ -8,8 +8,6 @@ import tuxsuite
 import argparse
 import httpx
 
-logger = logging.getLogger(__name__)
-
 def run_tuxsuite_tests(kernel_url: str, modules_url: str | None, tests: list[str], device: str, callback: str) -> str:
     params = {
         "device": device,
@@ -48,7 +46,7 @@ async def parse_tuxsuite2kcidb(tests_results: TuxSuiteTestStatus, stored_test: S
     lava_info = results['lava']
     for test in tests_results.tests:
         if test not in lava_info:
-            logger.warning(f"No results for {test}")
+            logging.warning(f"No results for {test}")
             continue
         path = get_test_path(stored_test.test_collection, test)
         test_id = generate_test_id(stored_test.test_uid, stored_test.test_collection, test)

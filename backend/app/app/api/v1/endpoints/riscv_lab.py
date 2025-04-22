@@ -10,7 +10,6 @@ from sqlmodel import func, select
 from fastapi import APIRouter, Request
 import logging
 
-logger = logging.getLogger(__name__)
 router = APIRouter()
 
 @router.post("/run-tests", status_code=204)
@@ -25,12 +24,12 @@ async def run_tests(tests_data: TuxSuiteTestSuite, session: SessionDep, request:
                                         .where(RunTest.build_id == tests_data.build_id)
                                         .where(RunTest.test == test)).one()
         if tests_has_been_run > 0:
-            logger.info(f"Test {test} from {tests_data.collection} has already been run for {tests_data.build_id}")
+            logging.info(f"Test {test} from {tests_data.collection} has already been run for {tests_data.build_id}")
             continue
         tests_to_run.append(test)
 
     if len(tests_to_run) == 0:
-        logger.info(f"No tests to run for build: {tests_data.build_id}")
+        logging.info(f"No tests to run for build: {tests_data.build_id}")
         return
 
     test_uid = run_tuxsuite_tests(tests_data.kernel_image_url, tests_data.modules_url,
@@ -51,18 +50,18 @@ async def sync_results(session: SessionDep):
     for test in non_submitted_tests:
         test_uid = test.test_uid
         results = test.results
-        logger.info(f"Submitting results for test uid {test_uid}")
+        logging.info(f"Submitting results for test uid {test_uid}")
         try:
             submit_tests(results)
             session.delete(test)
         except:
-            logger.warning(f"Could not submit results for test uid {test_uid}")
+            logging.warning(f"Could not submit results for test uid {test_uid}")
     session.commit()
 
 
 @router.post("/submit-results", status_code=204)
 async def sync_results(results: RunnerTestsResults, session: SessionDep):
-    logger.info(f"Received results for {results.test_uid}")
+    logging.info(f"Received results for {results.test_uid}")
     test = session.exec(select(ScheduledTest).where(ScheduledTest.test_uid == results.test_uid)).one()
     parsed_results = parse_results2kcidb(results, test)
     json_results = [item.to_json() for item in parsed_results]

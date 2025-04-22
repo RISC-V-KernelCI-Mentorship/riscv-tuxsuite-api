@@ -8,7 +8,6 @@ import kcidb
 import yaml
 import os
 
-logger = logging.getLogger(__name__)
 
 class KCITestResultsSubmitter:
 
@@ -16,15 +15,16 @@ class KCITestResultsSubmitter:
         config_path = os.path.join(os.path.dirname(__file__), "kcidb.yml")
         with open(config_path, "r") as f:
             config_file = yaml.safe_load(f)
-        self.__client = kcidb.Client(project_id=config_file["kcidb"]["project_id"],
-                                     topic_name=config_file["kcidb"]["topic"])
+        self.__client = None
+        #self.__client = kcidb.Client(project_id=config_file["kcidb"]["project_id"],
+        #                             topic_name=config_file["kcidb"]["topic"])
         self.__version_major = config_file["kcidb"]["major"]
         self.__version_minor = config_file["kcidb"]["minor"]
         self.__debug = settings.DEBUG
 
 
     def submit(self, tests):
-        logger.info(f"Submitting tests: {tests}")
+        logging.info(f"Submitting tests: {tests}")
         report = {
             "tests": tests,
             "version": {
@@ -33,7 +33,7 @@ class KCITestResultsSubmitter:
             }
         }
         if self.__debug:
-            logger.info(report)
+            logging.info(report)
         else:
             kcidb.io.SCHEMA.validate(report)            
             self.__client.submit(report)
@@ -70,5 +70,5 @@ def submit_tests(tests: list[dict]):
     try:
         _submitter.submit(tests)
     except Exception as e:
-        logger.error(f"Could not validate submission!: {str(e)}")
+        logging.error(f"Could not validate submission!: {str(e)}")
         raise TestSubmitionException()

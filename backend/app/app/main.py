@@ -10,23 +10,18 @@ from logging.handlers import RotatingFileHandler
 import logging
 import sys
 
-rotating_handler = RotatingFileHandler(settings.LOGS_FILE, maxBytes=20*1024, backupCount=2)
 logging.basicConfig(level=logging.DEBUG if settings.DEBUG else logging.INFO,
-                    format="%(asctime)s [%(processName)s: %(process)d] [%(threadName)s: %(thread)d] [%(levelname)s] %(name)s: %(message)s",
-                    handlers=[logging.StreamHandler(sys.stdout), rotating_handler])
-
-logger = logging.getLogger(__name__)
-logger.addHandler(logging.StreamHandler(sys.stdout))
+                    format="%(asctime)s [%(processName)s: %(process)d] [%(threadName)s: %(thread)d] [%(levelname)s] %(name)s: %(message)s")
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
-    print("startup fastapi")
+    logging.info("startup fastapi")
     create_db()
     yield
     # shutdown
-    print("shutdown fastapi")
+    logging.info("shutdown fastapi")
     
 
 
