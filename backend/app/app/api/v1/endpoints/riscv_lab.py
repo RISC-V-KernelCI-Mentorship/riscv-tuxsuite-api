@@ -1,8 +1,11 @@
 from app.core.db import SessionDep
 from app.models.tests import ScheduledTest, RunTest, TestResults
+from app.schemas.test_results import RunnerTestsResults
 from app.schemas.tuxsuite import TuxSuiteTestSuite
+from app.services.runner_service import parse_results2kcidb
 from app.services.tuxsuite_service import run_tuxsuite_tests
 from app.services.kcidb_services import submit_tests
+from app.utils.exceptions.tests_results_exceptions import TestSubmitionException
 from sqlmodel import func, select
 from fastapi import APIRouter, Request
 import logging
@@ -55,3 +58,18 @@ async def sync_results(session: SessionDep):
         except:
             logger.warning(f"Could not submit results for test uid {test_uid}")
     session.commit()
+
+
+@router.post("/submit-results", status_code=204)
+async def sync_results(results: RunnerTestsResults, session: SessionDep):
+    logger.info(f"Received results for {results.test_uid}")
+    test = session.exec(select(ScheduledTest).where(ScheduledTest.test_uid == results.test_uid)).one()
+    parsed_results = parse_results2kcidb(results, test)
+    json_results = [item.to_json() for item in parsed_results]
+    
+    try:
+        submit_tests(json_results)
+    except TestSubmitionException:
+        test_row = TestResults(test_uid=results.test_uid, results=json_results)
+        session.add(test_row)
+        session.commit() 
