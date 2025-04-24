@@ -45,7 +45,7 @@ class KCIDBTestSubmission:
 
     def __init__(self, path: str, result: str, log: str, test_id: str, build_id: str) -> Self:
         self.__test_id = test_id
-        self.__build_id = build_id
+        self.__build_id = build_id if build_id.startswith("maestro:") else f"maestro:{build_id}"
         self.__path = path
         self.__result = result
         self.__log = log
