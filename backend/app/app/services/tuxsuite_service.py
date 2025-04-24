@@ -1,4 +1,4 @@
-from app.models.tests import ScheduledTest
+from app.models.tests import RunTest, ScheduledTest
 from app.schemas.tuxsuite import TuxSuiteTestStatus
 from app.services.kcidb_services import KCIDBTestSubmission
 from app.utils.exceptions.tests_results_exceptions import DownloadResultsException, InvalidResultsException
@@ -22,7 +22,7 @@ def run_tuxsuite_tests(kernel_url: str, modules_url: str | None, tests: list[str
     uid = test.uid
     return uid
 
-async def parse_tuxsuite2kcidb(tests_results: TuxSuiteTestStatus, stored_test: ScheduledTest) -> list[KCIDBTestSubmission]:
+async def parse_tuxsuite2kcidb(tests_results: TuxSuiteTestStatus, stored_test: ScheduledTest, already_submitted: list[RunTest]) -> list[KCIDBTestSubmission]:
     parsed_results = []
     logs_url = f"{tests_results.download_url}logs.txt"
     results_json_url = f"{tests_results.download_url}results.json"
@@ -47,6 +47,9 @@ async def parse_tuxsuite2kcidb(tests_results: TuxSuiteTestStatus, stored_test: S
     for test in tests_results.tests:
         if test not in lava_info:
             logging.warning(f"No results for {test}")
+            continue
+        elif test in already_submitted:
+            logging.warning(f"Test {test} was already sumbitted for build {stored_test.build_id}")
             continue
         path = get_test_path(stored_test.test_collection, test)
         test_id = generate_test_id(stored_test.test_uid, stored_test.test_collection, test)

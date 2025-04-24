@@ -1,19 +1,19 @@
 from app.core.db import SessionDep
-from app.models.tests import ScheduledTest, RunTest, TestResults
+from app.models.tests import ScheduledTest, RunTest, TestResults, get_already_submitted_tests, mark_test_as_submitted
 from app.schemas.test_results import RunnerTestsResults
-from app.schemas.tuxsuite import TuxSuiteTestSuite
+from app.schemas.tuxsuite import TestSuite
 from app.services.runner_service import parse_results2kcidb
 from app.services.tuxsuite_service import run_tuxsuite_tests
 from app.services.kcidb_services import submit_tests
 from app.utils.exceptions.tests_results_exceptions import TestSubmitionException
-from sqlmodel import func, select
+from sqlmodel import func, select, update
 from fastapi import APIRouter, Request
 import logging
 
 router = APIRouter()
 
 @router.post("/run-tests", status_code=204)
-async def run_tests(tests_data: TuxSuiteTestSuite, session: SessionDep, request: Request):
+async def run_tests(tests_data: TestSuite, session: SessionDep, request: Request):
     """
     Schedules tests in tuxsuite.
     We only scheduledthe tests that have not been run for before for the build.
@@ -47,28 +47,31 @@ async def run_tests(tests_data: TuxSuiteTestSuite, session: SessionDep, request:
 @router.post("/sync-results", status_code=204)
 async def sync_results(session: SessionDep):
     non_submitted_tests = session.exec(select(TestResults)).all()
+
     for test in non_submitted_tests:
         test_uid = test.test_uid
         results = test.results
+        # Only submit results with submitted false
         logging.info(f"Submitting results for test uid {test_uid}")
         try:
             submit_tests(results)
             session.delete(test)
+            mark_test_as_submitted(test_uid, session)
+            
         except:
             logging.warning(f"Could not submit results for test uid {test_uid}")
     session.commit()
 
 
 @router.post("/submit-results", status_code=204)
-async def sync_results(results: RunnerTestsResults, session: SessionDep):
+async def submit_results(results: RunnerTestsResults, session: SessionDep):
     logging.info(f"Received results for {results.test_uid}")
-    test = session.exec(select(ScheduledTest).where(ScheduledTest.test_uid == results.test_uid)).one()
-    parsed_results = parse_results2kcidb(results, test)
+    parsed_results = parse_results2kcidb(results)
     json_results = [item.to_json() for item in parsed_results]
     
     try:
         submit_tests(json_results)
     except TestSubmitionException:
-        test_row = TestResults(test_uid=results.test_uid, results=json_results)
+        test_row = TestResults(test_uid=results.test_uid, build_id=results.build_id, results=json_results)
         session.add(test_row)
         session.commit() 

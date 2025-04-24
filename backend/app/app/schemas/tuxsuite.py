@@ -32,7 +32,7 @@ class TuxSuiteTestRequest(BaseModel):
     status: TuxSuiteTestStatus
 
 
-class TuxSuiteTestSuite(BaseModel):
+class TestSuite(BaseModel):
     build_id: str
     kernel_image_url: str
     modules_url: Optional[str] = None
