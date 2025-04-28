@@ -10,7 +10,7 @@ class ScheduledBuild(SQLModel, table=True):
     toolchain: str
     tree: str
     branch: str
-    kconfig_url: Optional[str] = None
+    kconfig: Optional[str] = None
     fragments: list[str] = Field(sa_column=Column(JSON), default=[])
 
 

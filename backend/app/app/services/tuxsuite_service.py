@@ -1,3 +1,4 @@
+from typing import Optional
 from app.models.tests import RunTest, ScheduledTest
 from app.schemas.tuxsuite import TuxSuiteTestStatus
 from app.services.kcidb_services import KCIDBTestSubmission
@@ -20,6 +21,25 @@ def run_tuxsuite_tests(kernel_url: str, modules_url: str | None, tests: list[str
     test = tuxsuite.Test(**params)
     test.test()
     uid = test.uid
+    return uid
+
+def run_tuxsuite_build(toolchain: str, arch: str, tree: str, branch: str, kconfig: str | None, fragments: list[str], callback: str):
+    params = {
+        "git_repo": tree,
+        "git_ref": branch,
+        "target_arch": arch,
+        "toolchain": toolchain,
+        "callback": callback
+    }
+    if kconfig is not None:
+        config = [kconfig] +  fragments
+    else:
+        config = fragments
+
+    params["kconfig"] = config
+    build = tuxsuite.Build(**params)
+    build.build()
+    uid = build.uid
     return uid
 
 async def parse_tuxsuite2kcidb(tests_results: TuxSuiteTestStatus, stored_test: ScheduledTest, already_submitted: list[RunTest]) -> list[KCIDBTestSubmission]:
