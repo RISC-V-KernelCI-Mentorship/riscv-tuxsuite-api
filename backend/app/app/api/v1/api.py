@@ -1,8 +1,9 @@
 from fastapi import APIRouter
 from app.api.v1.endpoints import (
-    tuxsuite, riscv_lab
+    tests, tuxsuite, sync
 )
 
 api_router = APIRouter()
-api_router.include_router(tuxsuite.router, prefix="/tuxsuite", tags=["callback"])
-api_router.include_router(riscv_lab.router, prefix="/riscv-lab", tags=["tests"])
+api_router.include_router(tuxsuite.router, prefix="/tuxsuite", tags=["tuxsuite", "callback"])
+api_router.include_router(tests.router, prefix="/tests", tags=["tests"])
+api_router.include_router(sync.router, prefix="/sync", tags=["tsync"])

@@ -12,7 +12,7 @@ import logging
 
 router = APIRouter()
 
-@router.post("/run-tests", status_code=204)
+@router.post("/run", status_code=204)
 async def run_tests(tests_data: TestSuite, session: SessionDep, request: Request):
     """
     Schedules tests in tuxsuite.
@@ -44,26 +44,8 @@ async def run_tests(tests_data: TestSuite, session: SessionDep, request: Request
     session.commit()
 
 
-@router.post("/sync-results", status_code=204)
-async def sync_results(session: SessionDep):
-    non_submitted_tests = session.exec(select(TestResults)).all()
 
-    for test in non_submitted_tests:
-        test_uid = test.test_uid
-        results = test.results
-        # Only submit results with submitted false
-        logging.info(f"Submitting results for test uid {test_uid}")
-        try:
-            submit_tests(results)
-            session.delete(test)
-            mark_test_as_submitted(test_uid, session)
-            
-        except:
-            logging.warning(f"Could not submit results for test uid {test_uid}")
-    session.commit()
-
-
-@router.post("/submit-results", status_code=204)
+@router.post("/submit", status_code=204)
 async def submit_results(results: RunnerTestsResults, session: SessionDep):
     logging.info(f"Received results for {results.test_uid}")
     parsed_results = parse_results2kcidb(results)
