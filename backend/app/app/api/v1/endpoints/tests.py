@@ -1,12 +1,11 @@
 from app.core.db import SessionDep
-from app.models.tests import ScheduledTest, RunTest, TestResults, get_already_submitted_tests, mark_test_as_submitted
-from app.schemas.test_results import RunnerTestsResults
-from app.schemas.tuxsuite import TestSuite
+from app.models.tests import ScheduledTest, RunTest, TestResults
+from app.schemas.tests import RunnerTestsResults, TestSuite
 from app.services.runner_service import parse_results2kcidb
 from app.services.tuxsuite_service import run_tuxsuite_tests
 from app.services.kcidb_services import submit_tests
 from app.utils.exceptions.tests_results_exceptions import TestSubmitionException
-from sqlmodel import func, select, update
+from sqlmodel import func, select
 from fastapi import APIRouter, Request
 import logging
 

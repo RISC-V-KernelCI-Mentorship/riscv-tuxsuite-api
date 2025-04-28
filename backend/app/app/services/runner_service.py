@@ -1,5 +1,4 @@
-from app.models.tests import ScheduledTest
-from app.schemas.test_results import RunnerTestsResults
+from app.schemas.tests import RunnerTestsResults
 from app.services.kcidb_services import KCIDBTestSubmission
 from app.utils.test_parser import generate_test_id, get_test_path
 

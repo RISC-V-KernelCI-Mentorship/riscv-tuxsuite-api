@@ -30,11 +30,3 @@ class TuxSuiteTestStatus(BaseModel):
 class TuxSuiteTestRequest(BaseModel):
     kind: Literal['test']
     status: TuxSuiteTestStatus
-
-
-class TestSuite(BaseModel):
-    build_id: str
-    kernel_image_url: str
-    modules_url: Optional[str] = None
-    tests: list[str]
-    collection: str

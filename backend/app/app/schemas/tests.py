@@ -13,3 +13,11 @@ class RunnerTestsResults(BaseModel):
     test_uid: str
     build_id: str
     tests: list[TestResult]
+
+
+class TestSuite(BaseModel):
+    build_id: str
+    kernel_image_url: str
+    modules_url: Optional[str] = None
+    tests: list[str]
+    collection: str
