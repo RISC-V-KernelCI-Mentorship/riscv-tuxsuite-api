@@ -4,7 +4,7 @@ from app.schemas.tests import RunnerTestsResults, TestSuite
 from app.services.runner_service import parse_results2kcidb
 from app.services.tuxsuite_service import run_tuxsuite_tests
 from app.services.kcidb_services import submit_tests
-from app.utils.exceptions.tests_results_exceptions import TestSubmitionException
+from app.utils.exceptions.tests_results_exceptions import KCIDBSubmitionException
 from sqlmodel import func, select
 from fastapi import APIRouter, Request
 import logging
@@ -52,7 +52,7 @@ async def submit_results(results: RunnerTestsResults, session: SessionDep):
     
     try:
         submit_tests(json_results)
-    except TestSubmitionException:
+    except KCIDBSubmitionException:
         test_row = TestResults(test_uid=results.test_uid, build_id=results.build_id, results=json_results)
         session.add(test_row)
         session.commit() 

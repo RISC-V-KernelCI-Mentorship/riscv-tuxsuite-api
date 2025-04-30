@@ -2,7 +2,7 @@
 class DownloadResultsException(Exception):
     pass
 
-class TestSubmitionException(Exception):
+class KCIDBSubmitionException(Exception):
     pass
 
 class InvalidResultsException(Exception):

@@ -1,8 +1,9 @@
 
-from app.utils.exceptions.tests_results_exceptions import TestSubmitionException
+from app.utils.exceptions.tests_results_exceptions import KCIDBSubmitionException
 from typing_extensions import Self
 from datetime import datetime, timezone
 from app.core.config import settings
+from abc import ABC, abstractmethod
 import logging
 import kcidb
 import yaml
@@ -37,31 +38,58 @@ class KCITestResultsSubmitter:
         else:
             kcidb.io.SCHEMA.validate(report)            
             self.__client.submit(report)
-            
 
 
-class KCIDBTestSubmission:
-    __origin = "riscv"
+class KCIDBSubmission(ABC):
+    _origin = "riscv"
 
-    def __init__(self, path: str, result: str, log: str, test_id: str, build_id: str) -> Self:
+    @abstractmethod
+    def to_json(self):
+        ...
+
+
+class KCIDBTestSubmission(KCIDBSubmission):
+
+    def __init__(self, path: str, result: str, log: str, test_id: str, build_id: str, started_at: datetime) -> Self:
         self.__test_id = test_id
-        self.__build_id = build_id if build_id.startswith("maestro:") else f"maestro:{build_id}"
+        self.__build_id = build_id
         self.__path = path
         self.__result = result
+        self.__started_at = started_at
         self.__log = log
     
 
     def to_json(self):
         return {
-                "id": f"{self.__origin}:{self.__test_id}",
+                "id": f"{self._origin}:{self.__test_id}",
                 "build_id": self.__build_id,
-                "origin": self.__origin,
+                "origin": self._origin,
                 "status": self.__result,
                 "path": self.__path,
-                "start_time": datetime.now(timezone.utc).replace(microsecond=0).isoformat(),
+                "start_time": self.__started_at.replace(microsecond=0).isoformat(),
                 "misc": {}
             }
 
+
+class KCIDBuildSubmission(KCIDBSubmission):
+
+    def __init__(self, build_id: str, valid: bool, arch: str, compiler: str, start_time: datetime) -> Self:
+        self.__build_id = build_id
+        self.__valid = valid
+        self.__arch = arch
+        self.__compiler = compiler
+        self.__start_time = start_time
+    
+
+    def to_json(self):
+        return {
+                "id": f"{self._origin}:{self.__build_id}",
+                "valid": self.__valid,
+                "origin": self._origin,
+                "architecture": self.__arch,
+                "compiler": self.__compiler,
+                "start_time": self.__start_time.replace(microsecond=0).isoformat()
+            }
 
 _submitter = KCITestResultsSubmitter()
 
@@ -71,4 +99,4 @@ def submit_tests(tests: list[dict]):
         _submitter.submit(tests)
     except Exception as e:
         logging.error(f"Could not validate submission!: {str(e)}")
-        raise TestSubmitionException()
+        raise KCIDBSubmitionException()

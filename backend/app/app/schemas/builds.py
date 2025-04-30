@@ -14,4 +14,4 @@ class BuildData(BaseModel):
     def check_config(self) -> Self:
         if self.kconfig is None and len(self.fragments) == 0:
             raise ValueError("At least one configuration source muste be given!")
-        return Self
+        return self

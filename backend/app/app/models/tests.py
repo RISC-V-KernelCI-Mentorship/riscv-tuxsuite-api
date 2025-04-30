@@ -10,6 +10,7 @@ class ScheduledTest(SQLModel, table=True):
     build_id: str
     test_collection: str
     tests: list[str] = Field(sa_column=Column(JSON))
+    scheduled_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 class TestResults(SQLModel, table=True):

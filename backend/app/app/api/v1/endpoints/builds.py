@@ -7,12 +7,13 @@ from fastapi import APIRouter, Request
 
 
 router = APIRouter()
-@router.post("/run")
+@router.post("/run", status_code=204)
 def run_builds(build_data: BuildData, session: SessionDep, request: Request):
     """
     Submit a build request.
     The requests stores all the information requireed for the builds along with an identifier.
     """
+
     # Schedule the build
     build_uid = run_tuxsuite_build(build_data.toolchain, "riscv", build_data.tree, build_data.branch,
                                    build_data.kconfig, build_data.fragments,

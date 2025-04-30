@@ -1,4 +1,5 @@
 from app.core.db import create_db
+from app.middleware.json_middleware import ModifyBuildCallbackBodyMiddleware
 from fastapi import (
     FastAPI,
 )
@@ -6,7 +7,6 @@ from app.api.v1.api import api_router as api_router_v1
 from app.core.config import settings
 from contextlib import asynccontextmanager
 from starlette.middleware.cors import CORSMiddleware
-from logging.handlers import RotatingFileHandler
 import logging
 import sys
 
@@ -42,6 +42,7 @@ if settings.BACKEND_CORS_ORIGINS:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+app.add_middleware(ModifyBuildCallbackBodyMiddleware)
 
 @app.get("/")
 async def root():

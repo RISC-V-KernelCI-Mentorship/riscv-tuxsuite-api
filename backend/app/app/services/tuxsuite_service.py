@@ -1,7 +1,8 @@
 from typing import Optional
+from app.models.builds import ScheduledBuild
 from app.models.tests import RunTest, ScheduledTest
-from app.schemas.tuxsuite import TuxSuiteTestStatus
-from app.services.kcidb_services import KCIDBTestSubmission
+from app.schemas.tuxsuite import TuxSuiteBuildStatus, TuxSuiteTestStatus
+from app.services.kcidb_services import KCIDBTestSubmission, KCIDBuildSubmission
 from app.utils.exceptions.tests_results_exceptions import DownloadResultsException, InvalidResultsException
 import logging
 from app.utils.test_parser import generate_test_id, get_test_path
@@ -42,7 +43,7 @@ def run_tuxsuite_build(toolchain: str, arch: str, tree: str, branch: str, kconfi
     uid = build.uid
     return uid
 
-async def parse_tuxsuite2kcidb(tests_results: TuxSuiteTestStatus, stored_test: ScheduledTest, already_submitted: list[RunTest]) -> list[KCIDBTestSubmission]:
+async def parse_tuxsuite_test2kcidb(tests_results: TuxSuiteTestStatus, stored_test: ScheduledTest, already_submitted: list[RunTest]) -> list[KCIDBTestSubmission]:
     parsed_results = []
     logs_url = f"{tests_results.download_url}logs.txt"
     results_json_url = f"{tests_results.download_url}results.json"
@@ -74,9 +75,17 @@ async def parse_tuxsuite2kcidb(tests_results: TuxSuiteTestStatus, stored_test: S
         path = get_test_path(stored_test.test_collection, test)
         test_id = generate_test_id(stored_test.test_uid, stored_test.test_collection, test)
         test_result = lava_info[test]['result'].upper()
-        parsed_results.append(KCIDBTestSubmission(path,  test_result, logs, test_id, stored_test.build_id))
+        parsed_results.append(KCIDBTestSubmission(path,  test_result, logs, test_id, stored_test.build_id, stored_test.scheduled_at))
     
     return parsed_results
+
+
+async def parse_tuxsuite_build2kcidb(build_results: TuxSuiteBuildStatus, stored_build: ScheduledBuild) -> KCIDBuildSubmission:
+    return KCIDBuildSubmission(stored_build.build_uid, 
+                                build_results.build_status == "pass",
+                                build_results.target_arch,
+                                build_results.toolchain,
+                                stored_build.scheduled_at)
 
 
 if __name__ == "__main__":
