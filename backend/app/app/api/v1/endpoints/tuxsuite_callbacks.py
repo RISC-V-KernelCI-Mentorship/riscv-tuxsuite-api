@@ -17,7 +17,7 @@ router = APIRouter()
 
 
 @router.post("/test", status_code=204)
-async def test_callback(x_tux_payload_signature: Annotated[str | None, Header()], request: TuxSuiteTestRequest,
+async def tuxsuite_test_callback(x_tux_payload_signature: Annotated[str | None, Header()], request: TuxSuiteTestRequest,
                          session: SessionDep):
     """
     Callback for tuxsuite test.
@@ -47,7 +47,7 @@ async def test_callback(x_tux_payload_signature: Annotated[str | None, Header()]
 
 
 @router.post("/build", status_code=204)
-async def build_callback(x_tux_payload_signature: Annotated[str | None, Header()], request: TuxSuiteBuildRequest,
+async def tuxsuite_build_callback(x_tux_payload_signature: Annotated[str | None, Header()], request: TuxSuiteBuildRequest,
                          session: SessionDep):
     """
     Callback for tuxsuite build.

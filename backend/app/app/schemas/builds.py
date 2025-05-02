@@ -1,9 +1,10 @@
-from typing import Optional
+from typing import Literal, Optional
 from typing_extensions import Self
 from pydantic import BaseModel, model_validator
 
 
 class BuildData(BaseModel):
+    runner: Literal['tuxsuite'] = 'tuxsuite'
     toolchain: str
     tree: str
     branch: str

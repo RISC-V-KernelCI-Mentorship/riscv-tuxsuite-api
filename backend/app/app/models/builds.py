@@ -18,6 +18,7 @@ class ScheduledBuild(SQLModel, table=True):
     kconfig: Optional[str] = None
     fragments: list[str] = Field(sa_column=Column(JSON), default=[])
     scheduled_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    runner: str
 
 
 class RunBuild(SQLModel, table=True):

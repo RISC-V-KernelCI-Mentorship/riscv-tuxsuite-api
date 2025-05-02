@@ -16,6 +16,7 @@ class RunnerTestsResults(BaseModel):
 
 
 class TestSuite(BaseModel):
+    runner: Literal['tuxsuite'] = 'tuxsuite'
     build_id: str
     kernel_image_url: str
     modules_url: Optional[str] = None

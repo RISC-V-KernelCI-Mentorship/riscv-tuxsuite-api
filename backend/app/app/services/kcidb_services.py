@@ -1,7 +1,7 @@
 
 from app.utils.exceptions.tests_results_exceptions import KCIDBSubmitionException
 from typing_extensions import Self
-from datetime import datetime, timezone
+from datetime import datetime
 from app.core.config import settings
 from abc import ABC, abstractmethod
 import logging

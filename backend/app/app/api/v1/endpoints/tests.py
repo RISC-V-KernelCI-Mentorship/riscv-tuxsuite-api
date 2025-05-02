@@ -1,8 +1,8 @@
 from app.core.db import SessionDep
+from app.core.runners import get_test_runner, get_test_callback_funcname
 from app.models.tests import ScheduledTest, RunTest, TestResults
 from app.schemas.tests import RunnerTestsResults, TestSuite
 from app.services.runner_service import parse_results2kcidb
-from app.services.tuxsuite_service import run_tuxsuite_tests
 from app.services.kcidb_services import submit_kcidb
 from app.utils.exceptions.tests_results_exceptions import KCIDBSubmitionException
 from sqlmodel import func, select
@@ -31,10 +31,13 @@ async def run_tests(tests_data: TestSuite, session: SessionDep, request: Request
         logging.info(f"No tests to run for build: {tests_data.build_id}")
         return
 
-    test_uid = run_tuxsuite_tests(tests_data.kernel_image_url, tests_data.modules_url,
-                                  tests_to_run, "qemu-riscv64",
-                                  str(request.url_for("test_callback")))
-    scheduled_test = ScheduledTest(test_uid=test_uid, build_id=tests_data.build_id, test_collection=tests_data.collection, tests=tests_to_run)
+    tests_runner = get_test_runner(tests_data.runner)
+
+    test_uid = tests_runner(tests_data.kernel_image_url, tests_data.modules_url,
+                      tests_to_run, "qemu-riscv64",
+                      str(request.url_for(get_test_callback_funcname(tests_data.runner))))
+    scheduled_test = ScheduledTest(test_uid=test_uid, build_id=tests_data.build_id, test_collection=tests_data.collection,
+                                   tests=tests_to_run, runner=tests_data.runner)
     session.add(scheduled_test)
     for test in tests_to_run:
         run_test = RunTest(build_id=tests_data.build_id, test=test)

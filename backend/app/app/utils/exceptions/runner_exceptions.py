@@ -1,0 +1,2 @@
+class RunnerNotSupported(Exception):
+    pass
