@@ -2,7 +2,7 @@ import logging
 from app.core.db import SessionDep
 from app.models.builds import RunBuild, mark_build_as_submitted
 from app.models.tests import TestResults, mark_test_as_submitted
-from app.services.kcidb_services import submit_tests
+from app.services.kcidb_services import submit_kcidb
 from fastapi import APIRouter
 from sqlmodel import select
 
@@ -19,7 +19,7 @@ async def sync_results(session: SessionDep):
         # Only submit results with submitted false
         logging.info(f"Submitting results for test uid {test_uid}")
         try:
-            submit_tests(results)
+            submit_kcidb(results)
             session.delete(test)
             mark_test_as_submitted(test_uid, session)
             
@@ -38,7 +38,7 @@ async def sync_builds(session: SessionDep):
         # Only submit results with submitted false
         logging.info(f"Submitting build for build uid {build_uid}")
         try:
-            submit_tests([submission])
+            submit_kcidb([submission])
             mark_build_as_submitted(build_uid, session)
             
         except:

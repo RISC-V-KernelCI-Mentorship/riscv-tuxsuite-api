@@ -1,7 +1,7 @@
 from typing import Annotated
 from app.core.db import SessionDep
 from app.models.builds import ScheduledBuild, mark_build_as_submitted, store_build_result
-from app.services.kcidb_services import submit_tests
+from app.services.kcidb_services import submit_kcidb
 from app.services.tuxsuite_service import parse_tuxsuite_build2kcidb, parse_tuxsuite_test2kcidb
 from app.utils.exceptions.tests_results_exceptions import KCIDBSubmitionException
 from fastapi import APIRouter, HTTPException, Header, Request, Response
@@ -38,7 +38,7 @@ async def test_callback(x_tux_payload_signature: Annotated[str | None, Header()]
     
     try:
         # Only submit results with submitted false
-        submit_tests(results)
+        submit_kcidb(results)
         mark_test_as_submitted(tests_results.uid, session)
     except KCIDBSubmitionException:
         test_row = TestResults(test_uid=tests_results.uid, build_id=build_id ,results=results)
@@ -67,7 +67,7 @@ async def build_callback(x_tux_payload_signature: Annotated[str | None, Header()
     store_build_result(build_results, parsed_build_result, session)
     
     try:
-        submit_tests([parsed_build_result.to_json()])
+        submit_kcidb([parsed_build_result.to_json()])
         mark_build_as_submitted(build_uid=build_results.uid, session=session)
     except KCIDBSubmitionException:
         logging.warning(f"Build {build_results.uid} couldn't be submitted")

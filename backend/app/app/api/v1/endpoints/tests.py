@@ -3,7 +3,7 @@ from app.models.tests import ScheduledTest, RunTest, TestResults
 from app.schemas.tests import RunnerTestsResults, TestSuite
 from app.services.runner_service import parse_results2kcidb
 from app.services.tuxsuite_service import run_tuxsuite_tests
-from app.services.kcidb_services import submit_tests
+from app.services.kcidb_services import submit_kcidb
 from app.utils.exceptions.tests_results_exceptions import KCIDBSubmitionException
 from sqlmodel import func, select
 from fastapi import APIRouter, Request
@@ -51,7 +51,7 @@ async def submit_results(results: RunnerTestsResults, session: SessionDep):
     json_results = [item.to_json() for item in parsed_results]
     
     try:
-        submit_tests(json_results)
+        submit_kcidb(json_results)
     except KCIDBSubmitionException:
         test_row = TestResults(test_uid=results.test_uid, build_id=results.build_id, results=json_results)
         session.add(test_row)

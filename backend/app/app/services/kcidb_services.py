@@ -94,7 +94,7 @@ class KCIDBuildSubmission(KCIDBSubmission):
 _submitter = KCITestResultsSubmitter()
 
 
-def submit_tests(tests: list[dict]):
+def submit_kcidb(tests: list[dict]):
     try:
         _submitter.submit(tests)
     except Exception as e:
