@@ -8,7 +8,6 @@ from app.core.config import settings
 from contextlib import asynccontextmanager
 from starlette.middleware.cors import CORSMiddleware
 import logging
-import sys
 
 logging.basicConfig(level=logging.DEBUG if settings.DEBUG else logging.INFO,
                     format="%(asctime)s [%(processName)s: %(process)d] [%(threadName)s: %(thread)d] [%(levelname)s] %(name)s: %(message)s")
