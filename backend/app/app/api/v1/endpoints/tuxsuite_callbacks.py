@@ -6,7 +6,7 @@ from app.services.tuxsuite_service import parse_tuxsuite_build2kcidb, parse_tuxs
 from app.utils.exceptions.tests_results_exceptions import KCIDBSubmitionException
 from fastapi import APIRouter, HTTPException, Header, Request, Response
 from app.models.tests import ScheduledTest, TestResults, get_already_submitted_tests,\
-    mark_as_received_tests_results, mark_test_as_submitted
+    mark_as_received_tests_results, mark_tests_as_submitted
 from app.schemas.tuxsuite import TuxSuiteBuildRequest, TuxSuiteTestRequest
 from sqlmodel import select
 import logging
@@ -31,15 +31,15 @@ async def tuxsuite_test_callback(x_tux_payload_signature: Annotated[str | None, 
     build_id = test.build_id
     # We mark the all tests from that test suit as received
     # TODO: Check how many of these are left as non-received and for how long
-    mark_as_received_tests_results(tests_results.uid, session)
     submitted_tests = get_already_submitted_tests(build_id, tests_results.tests, session)
     parsed_test_results = await parse_tuxsuite_test2kcidb(tests_results, test, submitted_tests)
     results = [item.to_json() for item in parsed_test_results]
+    mark_as_received_tests_results([item.test for item in parsed_test_results], build_id, session)
     
     try:
         # Only submit results with submitted false
         submit_kcidb(results)
-        mark_test_as_submitted(tests_results.uid, session)
+        mark_tests_as_submitted([item.test for item in parsed_test_results], build_id, session)
     except KCIDBSubmitionException:
         test_row = TestResults(test_uid=tests_results.uid, build_id=build_id ,results=results)
         session.add(test_row)

@@ -75,7 +75,7 @@ async def parse_tuxsuite_test2kcidb(tests_results: TuxSuiteTestStatus, stored_te
         path = get_test_path(stored_test.test_collection, test)
         test_id = generate_test_id(stored_test.test_uid, stored_test.test_collection, test)
         test_result = lava_info[test]['result'].upper()
-        parsed_results.append(KCIDBTestSubmission(path,  test_result, logs, test_id, stored_test.build_id, stored_test.scheduled_at))
+        parsed_results.append(KCIDBTestSubmission(test, path, test_result, logs, test_id, stored_test.build_id, stored_test.scheduled_at))
     
     return parsed_results
 

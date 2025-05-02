@@ -1,7 +1,7 @@
 import logging
 from app.core.db import SessionDep
 from app.models.builds import RunBuild, mark_build_as_submitted
-from app.models.tests import TestResults, mark_test_as_submitted
+from app.models.tests import TestResults, mark_tests_as_submitted
 from app.services.kcidb_services import submit_kcidb
 from fastapi import APIRouter
 from sqlmodel import select
@@ -21,7 +21,7 @@ async def sync_results(session: SessionDep):
         try:
             submit_kcidb(results)
             session.delete(test)
-            mark_test_as_submitted(test_uid, session)
+            mark_tests_as_submitted(test_uid, session)
             
         except:
             logging.warning(f"Could not submit results for test uid {test_uid}")

@@ -50,14 +50,18 @@ class KCIDBSubmission(ABC):
 
 class KCIDBTestSubmission(KCIDBSubmission):
 
-    def __init__(self, path: str, result: str, log: str, test_id: str, build_id: str, started_at: datetime) -> Self:
+    def __init__(self, test: str, path: str, result: str, log: str, test_id: str, build_id: str, started_at: datetime) -> Self:
         self.__test_id = test_id
         self.__build_id = build_id
         self.__path = path
         self.__result = result
         self.__started_at = started_at
         self.__log = log
-    
+        self.__test = test
+
+    @property
+    def test(self):
+        return self.__test
 
     def to_json(self):
         return {

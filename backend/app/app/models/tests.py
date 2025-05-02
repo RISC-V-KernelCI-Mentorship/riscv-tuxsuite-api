@@ -34,25 +34,26 @@ class RunTest(SQLModel, table=True):
 
 
 
-def mark_test_as_submitted(test_uid: str, session: SessionDep):
-    updated_tests = session.exec(update(TestResults, RunTest)
-                                         .values(submitted_results=True)
-                                         .where(RunTest.submitted_results == False)
-                                         .where(RunTest.received_results == True)
-                                         .where(TestResults.build_id == RunTest.build_id)
-                                         .where(TestResults.test_uid == test_uid))
+def mark_tests_as_submitted(tests: list[str], build_uid: str, session: SessionDep):
+    for test in tests:
+        run_test = session.exec(select(RunTest)
+                                .where(RunTest.build_id == build_uid)
+                                .where(RunTest.test == test)).one()
+        run_test.submitted_results = True
+        session.add(run_test)
     session.commit()
-    logging.info(f"Updated {updated_tests} tests for test {test_uid}")
+    logging.info(f"Marked tests {tests} as submitted")
 
 
-def mark_as_received_tests_results(test_uid: str, session: SessionDep):
-    updated_tests = session.exec(update(TestResults, RunTest)
-                                         .values(received_results=True)
-                                         .where(RunTest.received_results == False)
-                                         .where(TestResults.build_id == RunTest.build_id)
-                                         .where(TestResults.test_uid == test_uid))
+def mark_as_received_tests_results(tests: list[str], build_uid: str, session: SessionDep):
+    for test in tests:
+        run_test = session.exec(select(RunTest)
+                                .where(RunTest.build_id == build_uid)
+                                .where(RunTest.test == test)).one()
+        run_test.received_results = True
+        session.add(run_test)
     session.commit()
-    logging.info(f"Updated {updated_tests} tests for test {test_uid}")
+    logging.info(f"We recieved results for tests {tests}")
 
 
 def get_already_submitted_tests(build_id: str, tests: list[str], session: SessionDep):
