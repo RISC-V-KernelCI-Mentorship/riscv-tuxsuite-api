@@ -35,20 +35,22 @@ class RunTest(SQLModel, table=True):
 
 def mark_test_as_submitted(test_uid: str, session: SessionDep):
     updated_tests = session.exec(update(TestResults, RunTest)
-                                         .set(RunTest.submitted_results == True)
+                                         .values(submitted_results=True)
                                          .where(RunTest.submitted_results == False)
                                          .where(RunTest.received_results == True)
                                          .where(TestResults.build_id == RunTest.build_id)
                                          .where(TestResults.test_uid == test_uid))
+    session.commit()
     logging.info(f"Updated {updated_tests} tests for test {test_uid}")
 
 
 def mark_as_received_tests_results(test_uid: str, session: SessionDep):
     updated_tests = session.exec(update(TestResults, RunTest)
-                                         .set(RunTest.received_results == True)
+                                         .values(received_results=True)
                                          .where(RunTest.received_results == False)
                                          .where(TestResults.build_id == RunTest.build_id)
                                          .where(TestResults.test_uid == test_uid))
+    session.commit()
     logging.info(f"Updated {updated_tests} tests for test {test_uid}")
 
 
