@@ -4,6 +4,7 @@ from typing_extensions import Self
 from datetime import datetime
 from app.core.config import settings
 from abc import ABC, abstractmethod
+import requests
 import logging
 import kcidb
 import yaml
@@ -16,9 +17,6 @@ class KCITestResultsSubmitter:
         config_path = os.path.join(os.path.dirname(__file__), "kcidb.yml")
         with open(config_path, "r") as f:
             config_file = yaml.safe_load(f)
-        self.__client = None
-        #self.__client = kcidb.Client(project_id=config_file["kcidb"]["project_id"],
-        #                             topic_name=config_file["kcidb"]["topic"])
         self.__version_major = config_file["kcidb"]["major"]
         self.__version_minor = config_file["kcidb"]["minor"]
         self.__debug = settings.DEBUG
@@ -36,8 +34,10 @@ class KCITestResultsSubmitter:
         if self.__debug:
             logging.info(report)
         else:
-            kcidb.io.SCHEMA.validate(report)            
-            self.__client.submit(report)
+            kcidb.io.SCHEMA.validate(report)
+            requests.post(settings.KCIDB_SUBMIT_URL, headers={
+                "Authorization": f"Bearer {settings.KCIDB_TOKEN}"
+            }, json=report)
 
 
 class KCIDBSubmission(ABC):

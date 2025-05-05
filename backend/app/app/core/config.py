@@ -19,6 +19,8 @@ class Settings(BaseSettings, extra='ignore'):
     DEBUG: bool
     API_VERSION: str = "v1"
     API_V1_STR: str = f"/api/{API_VERSION}"
+    KCIDB_SUBMIT_URL: str
+    KCIDB_TOKEN: str
 
     model_config = SettingsConfigDict(env_file="../../.env", case_sensitive=True)
 
