@@ -5,7 +5,6 @@ services:
     restart: always
     command: "sh -c 'uvicorn app.main:app --reload --workers 3 --host 0.0.0.0 --port 8000 --log-config /log.ini'"
     volumes:
-      - ./backend/app:/code
       - ./log.ini:/log.ini
       - fastapi_riscv_database:/db
       - fastapi_riscv_logs:/logs
