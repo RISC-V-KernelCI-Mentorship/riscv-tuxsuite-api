@@ -10,7 +10,7 @@ import tuxsuite
 import argparse
 import httpx
 
-def run_tuxsuite_tests(kernel_url: str, modules_url: str | None, tests: list[str], device: str, callback: str) -> str:
+def run_tuxsuite_tests(kernel_url: str, modules_url: Optional[str], tests: list[str], device: str, callback: str) -> str:
     params = {
         "device": device,
         "kernel": kernel_url,
@@ -24,7 +24,7 @@ def run_tuxsuite_tests(kernel_url: str, modules_url: str | None, tests: list[str
     uid = test.uid
     return uid
 
-def run_tuxsuite_build(toolchain: str, arch: str, tree: str, branch: str, kconfig: str | None, fragments: list[str], callback: str):
+def run_tuxsuite_build(toolchain: str, arch: str, tree: str, branch: str, kconfig: Optional[str], fragments: list[str], callback: str):
     params = {
         "git_repo": tree,
         "git_ref": branch,
