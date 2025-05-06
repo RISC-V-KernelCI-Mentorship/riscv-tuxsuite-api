@@ -84,7 +84,15 @@ def get_build_runner(runner: str) -> BuildRunner:
             raise RunnerNotSupported(runner)
 
 
-def get_test_callback_funcname(runner: str):
+def get_test_callback_funcname(runner: str) -> str:
+    '''
+    Returns the name of the test callback function for a specific runner
+    Args:
+        :runner (str): runner code
+    
+    Returns:
+        str: name of the test callback
+    '''
     match runner:
         case 'tuxsuite':
             return 'tuxsuite_test_callback'
@@ -92,7 +100,15 @@ def get_test_callback_funcname(runner: str):
             raise RunnerNotSupported(runner)
 
 
-def get_build_callback_funcname(runner: str):
+def get_build_callback_funcname(runner: str) -> str:
+    '''
+    Returns the name of the build callback function for a specific runner
+    Args:
+        :runner (str): runner code
+    
+    Returns:
+        str: name of the test callback
+    '''
     match runner:
         case 'tuxsuite':
             return 'tuxsuite_build_callback'
