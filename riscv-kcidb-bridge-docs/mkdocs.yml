@@ -1,0 +1,8 @@
+site_name: RISC-V KCDIB bridge
+nav:
+  - Home: index.md
+  - Dependencies: dependencies.md
+  - Configuration: configuration.md
+  - Deployment: deployment.md
+  - Runners: runners.md
+theme: readthedocs
