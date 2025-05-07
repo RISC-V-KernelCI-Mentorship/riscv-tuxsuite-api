@@ -1,9 +1,9 @@
 
-from typing import Callable, Optional, Protocol
+from typing import Literal, Optional, Protocol
 from app.services.tuxsuite_service import run_tuxsuite_tests, run_tuxsuite_build
 from app.utils.exceptions.runner_exceptions import RunnerNotSupported
 
-AVAILABLE_RUNNERS = ['tuxsuite']
+type AVAILABLE_RUNNERS = Literal['tuxsuite']
 
 class TestRunner(Protocol):
     def __call__(self, kernel_url: str, modules_url: Optional[str], tests: list[str], device: str, callback: str) -> str:

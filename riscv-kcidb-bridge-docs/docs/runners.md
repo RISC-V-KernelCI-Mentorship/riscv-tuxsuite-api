@@ -10,7 +10,7 @@ By default we have implemented a [TuxSuite](https://tuxsuite.com/home) runner, w
 
 ## Locating runners
 
-All available runners can be found in the [`runners.py`](https://github.com/RISC-V-KernelCI-Mentorship/riscv-kcidb-bridge/blob/main/backend/app/app/core/runners.py) file, under the list `AVAILABLE_RUNNERS`.
+All available runners can be found in the [`runners.py`](https://github.com/RISC-V-KernelCI-Mentorship/riscv-kcidb-bridge/blob/main/backend/app/app/core/runners.py) file, under the `AVAILABLE_RUNNERS` type.
 
 This list is kept as an easy way to access the codes for all available runners.
 
@@ -38,7 +38,7 @@ After creating it, the scheduler it needs to be added to the [`runners.py`](http
 For example, let's assume we're adding a new `demo` runner. Integrating this runner could look like this:
 
 ```python
-AVAILABLE_RUNNERS = ['tuxsuite', 'demo']
+type AVAILABLE_RUNNERS = Literal['tuxsuite', 'demo']
 
 def get_test_runner(runner: str) -> TestRunner:
     match runner:
@@ -65,7 +65,7 @@ After creating it, the scheduler it needs to be added to the [`runners.py`](http
 For example, adding a new `demo` build runner could look like this:
 
 ```python
-AVAILABLE_RUNNERS = ['tuxsuite', 'demo']
+type AVAILABLE_RUNNERS = Literal['tuxsuite', 'demo']
 
 def get_build_runner(runner: str) -> BuildRunner:
     match runner:
