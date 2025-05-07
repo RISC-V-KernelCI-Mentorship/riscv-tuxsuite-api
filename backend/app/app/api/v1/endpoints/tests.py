@@ -14,7 +14,7 @@ router = APIRouter()
 @router.post("/run", status_code=204)
 async def run_tests(tests_data: TestSuite, session: SessionDep, request: Request):
     """
-    Schedules tests in tuxsuite.
+    Schedules tests in a runner.
     We only scheduledthe tests that have not been run for before for the build.
     """
     tests_to_run = []
