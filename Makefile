@@ -1,6 +1,7 @@
 #!/usr/bin/make
 
 include .env
+include .env_caddy
 
 help:
 	@echo "make"
