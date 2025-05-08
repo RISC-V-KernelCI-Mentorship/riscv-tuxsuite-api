@@ -1,8 +1,17 @@
 site_name: RISC-V KCDIB bridge
 nav:
   - Home: index.md
+  - API Reference: api.md
   - Dependencies: dependencies.md
   - Configuration: configuration.md
   - Deployment: deployment.md
   - Runners: runners.md
 theme: readthedocs
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        # See: https://mkdocstrings.github.io/python/usage/
+        python:
+          options:
+            docstring_style: sphinx

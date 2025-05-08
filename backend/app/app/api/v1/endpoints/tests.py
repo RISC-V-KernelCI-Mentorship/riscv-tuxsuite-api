@@ -1,3 +1,14 @@
+"""
+Services to handle tests runs and submissions.
+They define their own router so they can be integrated into any app.
+
+    from app.ap1.v1.endpoints import tests
+    from fastapi import FastAPI
+
+    app = FastAPI()
+    app.include_router(tests.router)
+
+"""
 from app.core.db import SessionDep
 from app.core.runners import get_test_runner, get_test_callback_funcname
 from app.models.tests import ScheduledTest, RunTest, TestResults
@@ -15,7 +26,11 @@ router = APIRouter()
 async def run_tests(tests_data: TestSuite, session: SessionDep, request: Request):
     """
     Schedules tests in a runner.
-    We only scheduledthe tests that have not been run for before for the build.
+    We only scheduled tests that have not been run for before for the build.
+    
+    :param tests_data: Tests to schedule
+    :param session: Database session
+    :param request: Request object, allows us to obtain a URL from a function name
     """
     tests_to_run = []
     for test in tests_data.tests:
@@ -49,6 +64,12 @@ async def run_tests(tests_data: TestSuite, session: SessionDep, request: Request
 
 @router.post("/submit", status_code=204)
 async def submit_results(results: RunnerTestsResults, session: SessionDep):
+    """
+    Submit test results to KCIDB. In this case test runner is not relevant.
+
+    :param results: Test results passed as the body of the request
+    :param session: Database session
+    """
     logging.info(f"Received results for {results.test_uid}")
     parsed_results = parse_results2kcidb(results)
     json_results = [item.to_json() for item in parsed_results]

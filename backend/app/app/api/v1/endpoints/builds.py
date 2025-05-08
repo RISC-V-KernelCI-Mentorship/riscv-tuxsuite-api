@@ -1,9 +1,18 @@
+"""
+Services to handle build runs.
+They define their own router so they can be integrated into any app.
 
+    from app.ap1.v1.endpoints import builds
+    from fastapi import FastAPI
+
+    app = FastAPI()
+    app.include_router(builds.router)
+
+"""
 from app.core.db import SessionDep
 from app.core.runners import get_build_callback_funcname, get_build_runner
 from app.models.builds import ScheduledBuild
 from app.schemas.builds import BuildData
-from app.services.tuxsuite_service import run_tuxsuite_build
 from fastapi import APIRouter, Request
 
 
@@ -13,6 +22,10 @@ def run_builds(build_data: BuildData, session: SessionDep, request: Request):
     """
     Submit a build request.
     The requests stores all the information requireed for the builds along with an identifier.
+
+    :param build_data: Data required by runners to perform a build
+    :param session: Database session
+    :param request: Request object
     """
     build_runner = get_build_runner(build_data.runner)
     # Schedule the build

@@ -1,3 +1,17 @@
+"""
+TuxSuite runner callbacks. 
+In their specific case they send a header that allows verifying the source of the request.
+Sadly, we have no way of using that header (at least for the moment), since we cannot obtain a signature 
+in the community project.
+They define their own router so they can be integrated into any app.
+
+    from app.ap1.v1.endpoints import tuxsuite_callbacks
+    from fastapi import FastAPI
+
+    app = FastAPI()
+    app.include_router(tuxsuite_callbacks.router)
+
+"""
 from typing import Annotated
 from app.core.db import SessionDep
 from app.models.builds import ScheduledBuild, mark_build_as_submitted, store_build_result
@@ -23,8 +37,13 @@ async def tuxsuite_test_callback(x_tux_payload_signature: Annotated[str | None, 
     Callback for tuxsuite test.
     It obtains the test from the database (to get its build id), stores the results in 
     the TestResults table and marks the test as finished.
+
+    :param x_tux_payload_signature: Payload signature used to verify the origin of the request
+    :param request: Test evaluation result
+    :param session: Database session
+
     """
-    # TODO: add payload signature check
+    # TODO: add payload signature check (when available)
     tests_results = request.status
     logging.info(f"Received results for {tests_results.uid}")
     test = session.exec(select(ScheduledTest).where(ScheduledTest.test_uid == tests_results.uid)).one()
@@ -53,6 +72,10 @@ async def tuxsuite_build_callback(x_tux_payload_signature: Annotated[str | None,
     Callback for tuxsuite build.
     It obtains the build from the database, and marks its completion state.
     If it passed the build we submit it to KCIDB
+
+    :param x_tux_payload_signature: Payload signature used to verify the origin of the request
+    :param request: Build result
+    :param session: Database session
     """
     # TODO: add payload signature check
     build_results = request.status

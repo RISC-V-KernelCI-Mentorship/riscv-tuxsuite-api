@@ -1,3 +1,14 @@
+"""
+Services that handle re-trying failed submsissions.
+They define their own router so they can be integrated into any app.
+
+    from app.ap1.v1.endpoints import sync
+    from fastapi import FastAPI
+
+    app = FastAPI()
+    app.include_router(sync.router)
+
+"""
 import logging
 from app.core.db import SessionDep
 from app.models.builds import RunBuild, mark_build_as_submitted
@@ -11,6 +22,12 @@ router = APIRouter()
 
 @router.post("/results", status_code=204)
 async def sync_results(session: SessionDep):
+    """
+    Looks for unsubmitted test results and tries to submit them again.
+    If the re try fails the results are kept stored, so that they can be submitted later.
+
+    :param session: Database session. Used to access stored results
+    """
     non_submitted_tests = session.exec(select(TestResults)).all()
 
     for test in non_submitted_tests:
@@ -30,6 +47,12 @@ async def sync_results(session: SessionDep):
 
 @router.post("/builds", status_code=204)
 async def sync_builds(session: SessionDep):
+    """
+    Looks for unsubmitted builds and tries to submit them again.
+    If the re try fails the results are kept stored, so that they can be submitted later.
+
+    :param session: Database session. Used to access stored results
+    """
     non_submitted_builds = session.exec(select(RunBuild).where(RunBuild.submitted == False)).all()
 
     for build in non_submitted_builds:
