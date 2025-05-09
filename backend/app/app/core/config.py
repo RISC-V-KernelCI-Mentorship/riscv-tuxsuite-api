@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import AnyHttpUrl
 from enum import Enum
@@ -15,6 +16,7 @@ class Settings(BaseSettings, extra='ignore'):
     BACKEND_CORS_ORIGINS: list[str] | list[AnyHttpUrl]
     MODE: ModeEnum = ModeEnum.development
     DB_URL: str
+    DB_CERT_PATH: Optional[str]
     LOGS_FILE: str
     DEBUG: bool
     API_VERSION: str = "v1"
