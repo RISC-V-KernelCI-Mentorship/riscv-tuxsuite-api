@@ -1,4 +1,4 @@
-site_name: RISC-V KCDIB bridge
+site_name: RISC-V KCI bridge
 nav:
   - Home: index.md
   - API Reference: api.md
