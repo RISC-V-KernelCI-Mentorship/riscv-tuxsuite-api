@@ -1555,7 +1555,7 @@ dev = ["flake8", "pylint", "pytest", "yamllint"]
 type = "git"
 url = "https://git@github.com/kernelci/kcidb.git"
 reference = "HEAD"
-resolved_reference = "631d7eb08527bb7597cfda6cf331288e6071bb4d"
+resolved_reference = "8fb83c074cf003c5a558e616cb2fd32fa682c6d4"
 
 [[package]]
 name = "kcidb_io"
