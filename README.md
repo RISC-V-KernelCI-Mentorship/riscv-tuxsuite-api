@@ -1,6 +1,6 @@
-# RISC-V Test API with TuxSuite
+# RISC-V Kernel CI Bridge
 
-This is a FastAPI project initialized using [`create-fastapi-project`](https://github.com/allient/create-fastapi-project), designed to provide a quick start for building APIs with [FastAPI](https://fastapi.tiangolo.com/).
+You can find a detailed documentation on this project in this link [https://risc-v-kernelci-mentorship.github.io/riscv-kci-bridge/](https://risc-v-kernelci-mentorship.github.io/riscv-kci-bridge/).
 
 ## Getting Started
 
