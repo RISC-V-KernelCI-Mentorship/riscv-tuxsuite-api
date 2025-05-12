@@ -100,6 +100,9 @@ _submitter = KCITestResultsSubmitter()
 
 def submit_kcidb(tests: list[dict]):
     try:
+        if len(tests) == 0:
+            logging.info("Got an empty list of tests, skipping submission")
+            return
         _submitter.submit(tests)
     except Exception as e:
         logging.error(f"Could not validate submission!: {str(e)}")
