@@ -15,3 +15,5 @@ plugins:
         python:
           options:
             docstring_style: sphinx
+          paths:
+            - "../backend/app/"
