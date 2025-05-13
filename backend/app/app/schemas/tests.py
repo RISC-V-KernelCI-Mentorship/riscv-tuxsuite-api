@@ -13,6 +13,8 @@ class TestResult(BaseModel):
 class RunnerTestsResults(BaseModel):
     test_uid: str = Field(description="Unique identifier from the runner", examples=["2wgX3BsGkUZMVs4JW6oMEoE2Qry"])
     build_id: str = Field(description="Build id inside KernelCI", examples=["maestro:681b69099ae9711e9ed49766"])
+    device: str = Field(description="Device used to run the tests", examples=["qemu-riscv64"])
+    runtime: str = Field(description="A description of the runtime environment", examples=["GitHub Actions"])
     tests: list[TestResult] = Field(description="List of test results")
 
 

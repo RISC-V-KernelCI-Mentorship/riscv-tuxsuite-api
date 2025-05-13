@@ -50,7 +50,7 @@ class KCIDBSubmission(ABC):
 
 class KCIDBTestSubmission(KCIDBSubmission):
 
-    def __init__(self, test: str, path: str, result: str, log: str, test_id: str, build_id: str, started_at: datetime) -> Self:
+    def __init__(self, test: str, path: str, result: str, log: str, test_id: str, build_id: str, started_at: datetime, runner: str, platform: str) -> Self:
         self.__test_id = test_id
         self.__build_id = build_id
         self.__path = path
@@ -58,6 +58,8 @@ class KCIDBTestSubmission(KCIDBSubmission):
         self.__started_at = started_at
         self.__log = log
         self.__test = test
+        self.__runner = runner
+        self.__platform = platform
 
     @property
     def test(self):
@@ -71,7 +73,10 @@ class KCIDBTestSubmission(KCIDBSubmission):
                 "status": self.__result,
                 "path": self.__path,
                 "start_time": self.__started_at.replace(microsecond=0).isoformat(),
-                "misc": {}
+                "misc": {
+                    "runtime": self.__runner,
+                    "platform": self.__platform
+                }
             }
 
 
