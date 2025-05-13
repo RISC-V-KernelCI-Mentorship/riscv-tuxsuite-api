@@ -53,7 +53,7 @@ def mark_as_received_tests_results(tests: list[str], build_uid: str, session: Se
         run_test.received_results = True
         session.add(run_test)
     session.commit()
-    logging.info(f"We recieved results for tests {tests}")
+    logging.info(f"We received results for tests {tests}")
 
 
 def get_already_submitted_tests(build_id: str, tests: list[str], session: SessionDep):
