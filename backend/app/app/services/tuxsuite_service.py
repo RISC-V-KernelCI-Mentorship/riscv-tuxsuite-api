@@ -67,14 +67,15 @@ async def parse_tuxsuite_test2kcidb(tests_results: TuxSuiteTestStatus, stored_te
     lava_info = results['lava']
     for test in tests_results.tests:
         if test not in lava_info:
-            logging.warning(f"No results for {test}")
-            continue
+            logging.warning(f"No results for {test}, unknown result: MISS")
+            test_result = "MISS"
         elif test in already_submitted:
             logging.warning(f"Test {test} was already sumbitted for build {stored_test.build_id}")
             continue
+        else:
+            test_result = lava_info[test]['result'].upper()
         path = get_test_path(stored_test.test_collection, test)
         test_id = generate_test_id(stored_test.test_uid, stored_test.test_collection, test)
-        test_result = lava_info[test]['result'].upper()
         parsed_results.append(KCIDBTestSubmission(test, path, test_result, logs, test_id, stored_test.build_id, stored_test.scheduled_at))
     
     return parsed_results
