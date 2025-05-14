@@ -107,10 +107,26 @@ def get_build_callback_funcname(runner: str) -> str:
         :runner (str): runner code
     
     Returns:
-        str: name of the test callback
+        str: name of the build callback
     '''
     match runner:
         case 'tuxsuite':
             return 'tuxsuite_build_callback'
+        case _:
+            raise RunnerNotSupported(runner)
+
+
+def get_boot_callback_funcname(runner: str) -> str:
+    '''
+    Returns the name of the boot callback function for a specific runner
+    Args:
+        :runner (str): runner code
+    
+    Returns:
+        str: name of the boot callback
+    '''
+    match runner:
+        case 'tuxsuite':
+            return 'tuxsuite_boot_callback'
         case _:
             raise RunnerNotSupported(runner)

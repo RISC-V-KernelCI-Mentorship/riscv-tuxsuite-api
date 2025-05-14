@@ -9,6 +9,7 @@ class TuxSuiteTestStatus(BaseModel):
     download_url: str = Field(description="URL where tests results can be downloaded from", examples=["https://storage.tuxsuite.com/public/tuxsuite/demo/tests/2MBYa8FhoBHkRCX2BMMPusjuClf/"])
     uid: str = Field(description="Unique identifier of this test run", examples=["2MBYa8FhoBHkRCX2BMMPusjuClf"])
     device: str = Field(description="Device where tests were run", examples=["qemu-riscv64"])
+    result: str = Field(description="General results of the whole test operation", examples=["pass", "fail"])
 
 
 class TuxSuiteBuildStatus(BaseModel):

@@ -21,6 +21,7 @@ The project makes use of [KCIDB](https://github.com/kernelci/kcidb) to submit re
                         endpoints/          # Contains all endpoint implementations
                             builds.py       # Submit a build endpoint
                             tests.py        # Submit tests endpoint
+                            boot.py         # Submit boot tests endpoint
                             ...  
                         api.py              # Gathers all endpoints into a single router
                 core/
@@ -60,7 +61,7 @@ There is a separate sync service which is meant to be called once a day to retry
 
 ### Run tests
 
-The endpoint is [`/api/v1/tests/run`](https://github.com/RISC-V-KernelCI-Mentorship/riscv-kcidb-bridge/blob/main/backend/app/app/api/vi/endpoints/tests.py#L15). To run tests you need to send a `POST HTTP` request with a body with this structure:
+The endpoint is [`/api/v1/tests/run`](https://github.com/RISC-V-KernelCI-Mentorship/riscv-kcidb-bridge/blob/main/backend/app/app/api/vi/endpoints/tests.py#L25). To run tests you need to send a `POST HTTP` request with a body with this structure:
 
 ```python
     {
@@ -77,9 +78,24 @@ The endpoint is [`/api/v1/tests/run`](https://github.com/RISC-V-KernelCI-Mentors
 
 The specific details on each of the fields can be found in the [`TestSuite` schema](https://github.com/RISC-V-KernelCI-Mentorship/riscv-kcidb-bridge/blob/main/backend/app/app/schemas/tests.py#L19).
 
+### Run boot tests
+
+The endpoint is [`/api/v1/boot-test/run`](https://github.com/RISC-V-KernelCI-Mentorship/riscv-kcidb-bridge/blob/main/backend/app/app/api/vi/endpoints/boot.py#L23). To run boot tests you need to send a `POST HTTP` request with a body with this structure:
+
+```python
+    {
+        "runner": "string",
+        "build_id": "string",
+        "kernel_image_url": "string",
+        "modules_url": "string"
+    }
+```
+
+The specific details on each of the fields can be found in the [`TestSuite` schema](https://github.com/RISC-V-KernelCI-Mentorship/riscv-kcidb-bridge/blob/main/backend/app/app/schemas/tests.py#L19).
+
 ### Run builds
 
-The endpoint is [`/api/v1/builds/run`](https://github.com/RISC-V-KernelCI-Mentorship/riscv-kcidb-bridge/blob/main/backend/app/app/api/vi/endpoints/builds.py#L11). To run builds you need to send a `POST HTTP` request with a body with this structure:
+The endpoint is [`/api/v1/builds/run`](https://github.com/RISC-V-KernelCI-Mentorship/riscv-kcidb-bridge/blob/main/backend/app/app/api/vi/endpoints/builds.py#L20). To run builds you need to send a `POST HTTP` request with a body with this structure:
 
 ```python
     {

@@ -25,3 +25,10 @@ class TestSuite(BaseModel):
     modules_url: Optional[str] = Field(default=None, description="Built modules URL (must be compressed)", examples=["https://files.kernelci.org/kbuild-gcc-12-riscv-681b69099ae9711e9ed49766/modules.tar.xz"])
     tests: list[str] = Field(description="List of tests to run", examples=[["ltp-nptl", "ltp-fsx"]])
     collection: str = Field(description="Name of the tests collection", examples=["ltp"])
+
+
+class BootTestSuite(BaseModel):
+    runner: AVAILABLE_RUNNERS = Field(default="tuxsuite", description="Runner that will run the tests")
+    build_id: str = Field(description="Build id inside KernelCI", examples=["maestro:681b69099ae9711e9ed49766"])
+    kernel_image_url: str = Field(description="Built kernel image URL", examples=["https://files.kernelci.org/kbuild-gcc-12-riscv-681b69099ae9711e9ed49766/Image"])
+    modules_url: Optional[str] = Field(default=None, description="Built modules URL (must be compressed)", examples=["https://files.kernelci.org/kbuild-gcc-12-riscv-681b69099ae9711e9ed49766/modules.tar.xz"])

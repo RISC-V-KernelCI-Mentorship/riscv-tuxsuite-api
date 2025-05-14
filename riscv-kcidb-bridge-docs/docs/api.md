@@ -8,6 +8,10 @@
 
 ::: app.api.v1.endpoints.builds
 
+## Boot testing
+
+:: app.api.v1.endpoints.boot
+
 ## Sync
 
 ::: app.api.v1.endpoints.sync

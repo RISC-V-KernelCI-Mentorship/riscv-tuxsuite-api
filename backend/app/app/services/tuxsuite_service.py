@@ -14,7 +14,7 @@ def run_tuxsuite_tests(kernel_url: str, modules_url: Optional[str], tests: list[
     params = {
         "device": device,
         "kernel": kernel_url,
-        "tests": tests,
+        "tests": list(filter(lambda test: test != "boot", tests)),
         "callback": callback
     }
     if modules_url is not None:
@@ -79,6 +79,15 @@ async def parse_tuxsuite_test2kcidb(tests_results: TuxSuiteTestStatus, stored_te
         parsed_results.append(KCIDBTestSubmission(test, path, test_result, logs, test_id, stored_test.build_id, stored_test.scheduled_at, "tuxsuite", tests_results.device))
     
     return parsed_results
+
+
+async def parse_tuxsuite_boot2kcidb(tests_results: TuxSuiteTestStatus, stored_test: ScheduledTest, already_submitted: list[RunTest]) -> list[KCIDBTestSubmission]:
+    if "boot" in already_submitted:
+        return []
+    test_result = tests_results.result.upper()
+    path = "boot"
+    test_id = generate_test_id(stored_test.test_uid, stored_test.test_collection, path)
+    return [KCIDBTestSubmission("boot", path, test_result, "", test_id, stored_test.build_id, stored_test.scheduled_at, "tuxsuite", tests_results.device)]
 
 
 async def parse_tuxsuite_build2kcidb(build_results: TuxSuiteBuildStatus, stored_build: ScheduledBuild) -> KCIDBuildSubmission:
