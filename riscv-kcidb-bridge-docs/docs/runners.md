@@ -6,7 +6,7 @@ Furthermore, we assume that each runner accepts a URL as a callback, and that it
 
 Depending on the use of the runner you'll need to either define a `TestRunner`, a `BuildRunner` or both.
 
-By default we have implemented a [TuxSuite](https://tuxsuite.com/home) runner, which runs both tests and builds.
+By default we have implemented a [TuxSuite](https://tuxsuite.com/home) runner, which runs both tests and builds (note that TuxSuite offers 1,000 tests runs per month).
 
 ## Locating runners
 
